@@ -1,6 +1,6 @@
 # Relatório — Análise de Pagamentos do Bolsa Família (Janeiro/2026)
 
-
+| Campo | Informação |
 |---|---|
 | **Disciplina** | Programação Concorrente e Distribuída |
 | **Aluno(s)** | Amanda Ramos e Arthur Poeck |
