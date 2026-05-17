@@ -290,7 +290,7 @@ O uso de threads, estruturas concorrentes e processamento paralelo não apenas a
 
 ## 12. Referências
 
-- BRASIL. Portal de Dados Abertos — Pagamentos do Bolsa Família. Disponível em: <[https://dados.gov.br](https://dados.gov.br/dados/conjuntos-dados/bolsa-familia---pagamentos)>. Acesso em: maio 2026.
+- BRASIL. Portal de Dados Abertos — Pagamentos do Bolsa Família. Disponível em: [<[https://dados.gov.br](https://dados.gov.br/dados/conjuntos-dados/bolsa-familia---pagamentos)>](https://dados.gov.br/dados/conjuntos-dados/bolsa-familia---pagamentos). Acesso em: maio 2026.
 - BRASIL. Lei nº 14.601, de 19 de junho de 2023. Institui o Programa Bolsa Família.
 - TANENBAUM, Andrew S.; VAN STEEN, Maarten. *Sistemas Distribuídos: Princípios e Paradigmas*. 2. ed. Pearson, 2007.
 
