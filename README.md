@@ -110,11 +110,11 @@ Todos os testes foram executados com a máquina em estado dedicado: sem outros p
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 |:---:|:---:|
-| 1 | 262,40 |
-| 2 | 138,70 |
-| 4 | 72,10 |
-| 8 | 41,30 |
-| 12 | 38,60 |
+| 1 |  |
+| 2 |  |
+| 4 |  |
+| 8 |  |
+| 12 |  |
 
 ---
 
@@ -141,11 +141,7 @@ onde:
 
 | Threads/Processos | Tempo (s) | Speedup | Eficiência |
 |:---:|:---:|:---:|:---:|
-| 1 | 262,40 | 1,00 | 1,00 |
-| 2 | 138,70 | 1,89 | 0,945 |
-| 4 | 72,10 | 3,64 | 0,909 |
-| 8 | 41,30 | 6,35 | 0,794 |
-| **12** | **38,60** | **6,80** | **0,567** |
+
 
 > **Melhor speedup:** 6,80× com 12 threads | **Melhor eficiência:** 94,5% com 2 threads
 
@@ -154,18 +150,7 @@ onde:
 ## 7. Gráfico de Tempo de Execução (ajustar)
 
 ```
-Tempo de Execução × Threads
-│
-262,4s ┤████████████████████████████████████████████████████  1 thread
-       │
-138,7s ┤████████████████████████████  2 threads
-       │
- 72,1s ┤██████████████  4 threads
-       │
- 41,3s ┤████████  8 threads
-       │
- 38,6s ┤███████  12 threads
-       └──────────────────────────────────────────────────────
+
 ```
 
 
@@ -177,17 +162,6 @@ Tempo de Execução × Threads
 ```
 Speedup × Threads
 │
-12,0 ┤- - - - - - - - - - - - - - - - - - - - - - ◇  Ideal
-     │
- 6,8 ┤                                         ●  Obtido
- 6,4 ┤                               ●
-     │
- 3,6 ┤               ●
-     │
- 1,9 ┤       ●
- 1,0 ┤●
-     └───────────────────────────────────────────
-       1       2       4       8      12
 ```
 
 
@@ -199,15 +173,6 @@ Speedup × Threads
 ```
 Eficiência (%) × Threads
 │
-100% ┤████  1 thread  (100,0%)
- 94% ┤████  2 threads  (94,5%)
- 91% ┤████  4 threads  (90,9%)
- 79% ┤███   8 threads  (79,4%)
- 57% ┤██    12 threads (56,7%)
-     └──────────────────────────────────────────────
-       ✅ ≥70%: Eficiência aceitável
-       🟠 50–70%: Eficiência moderada
-       🔴 <50%: Baixa eficiência
 ```
 
 
