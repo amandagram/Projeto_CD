@@ -141,7 +141,10 @@ onde:
 
 | Threads/Processos | Tempo (s) | Speedup | Eficiência |
 |:---:|:---:|:---:|:---:|
-
+|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|:---:|
+|:---:|:---:|:---:|:---:|
 
 > **Melhor speedup:**  | **Melhor eficiência:** 
 
@@ -214,9 +217,9 @@ Eficiência (%) × Threads
 
 O projeto demonstrou, de forma prática e mensurável, que a **programação concorrente e distribuída** é essencial para o processamento eficiente de datasets de grande volume como os pagamentos do Bolsa Família.
 
-O **melhor custo-benefício** foi obtido com **8 threads**, que proporcionou speedup de 6,35× com eficiência de 79,4% — equilibrando ganho real de desempenho sem overhead excessivo. Configurações acima de 8 threads apresentaram retornos decrescentes significativos.
+O **melhor custo-benefício** foi obtido com 
 
-O programa **escala razoavelmente bem** até o limite dos núcleos físicos (6), mas encontra barreiras de escalabilidade ao tentar explorar threads lógicas adicionais via Hyper-Threading — comportamento coerente com as previsões da Lei de Amdahl.
+
 
 ### Melhorias possíveis para trabalhos futuros
 
