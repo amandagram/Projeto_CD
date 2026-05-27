@@ -48,14 +48,14 @@ Eficiência tecnológica a serviço público.
 
 Em suma, este projeto demonstra que a tecnologia, especialmente a programação paralela e distribuída, é uma aliada indispensável na construção de um Estado mais transparente, eficiente e justo. Cada análise realizada sobre os dados do Bolsa Família é, em última instância, uma contribuição para que os recursos públicos cheguem a quem mais precisa.
 
-A análise dos pagamentos do Bolsa Família em janeiro de 2026 revelou padrões importantes: a concentração de recursos em grandes metrópoles, a heterogeneidade dos valores individuais, a desigualdade regional na distribuição e a existência de municípios com potencial sub-cobertura do programa.
+A análise dos pagamentos do Bolsa Família revela padrões importantes: a concentração de recursos em grandes metrópoles, a heterogeneidade dos valores individuais, a desigualdade regional na distribuição e a existência de municípios com potencial sub-cobertura do programa.
 
 O uso de threads, estruturas concorrentes e processamento paralelo não apenas acelerou a análise, mas tornou viável o processamento de um volume de dados que, de forma sequencial, seria impraticável em tempo hábil. 
 
 ---
 ### Qual é o objetivo do programa?
 
-O programa tem como objetivo processar o dataset oficial de pagamentos do **Bolsa Família** referente ao mês de **janeiro de 2026**, extraindo as seguintes métricas:
+O programa tem como objetivo processar o dataset oficial de pagamentos do **Bolsa Família** referente ao mês de **janeiro de 2026, dezembro de 2025, novembro de 2025 e outubro de 2025**, extraindo as seguintes métricas:
 
 - **Maior valor de pagamento individual** — com UF e nome do município
 - **Menor valor de pagamento individual** — com UF e nome do município
@@ -63,11 +63,11 @@ O programa tem como objetivo processar o dataset oficial de pagamentos do **Bols
 - **Ranking dos cinco municípios com maiores volumes totais** de pagamento (UF + valor)
 - **Ranking dos cinco municípios com menores volumes totais** de pagamento (UF + valor)
 
-A paralelização visa reduzir drasticamente o tempo de processamento diante do volume massivo de dados (~1.048.576 de registros).
+A paralelização visa reduzir drasticamente o tempo de processamento diante do volume massivo de dados (~4.000.000 de registros).
 
 ### Qual o volume de dados processado?
 
-O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de Dados Abertos do Governo Federal](https://dados.gov.br). Para janeiro de 2026, o arquivo contém aproximadamente **1.048.576 de registros**, com os campos: `Més de competência`, `Més de referência`, `UF`, `Nome do Município`, `NIS Favorecido`,`Código do Município SIAFI`, `CPF` (anonimizado), `Nome` e `Valor do Benefício`.
+O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de Dados Abertos do Governo Federal](https://dados.gov.br). Para os 04 meses, o arquivo contém aproximadamente **4.000.000 de registros (8,1Gb)**, com os campos: `Més de competência`, `Més de referência`, `UF`, `Nome do Município`, `NIS Favorecido`,`Código do Município SIAFI`, `CPF` (anonimizado), `Nome` e `Valor do Benefício`.
 
 ### Qual algoritmo foi utilizado? (ajustar)
 
@@ -85,7 +85,7 @@ Foram utilizados dois algoritmos principais em conjunto:
 | Paralelo (fase de redução) | O(p) |
 | **Total paralelo efetivo** | **O(n/p + p)** |
 
-> onde **n** = número de registros (~1,5M) e **p** = número de threads.
+> onde **n** = número de registros (~4M) e **p** = número de threads.
 
 ---
 
@@ -231,7 +231,7 @@ Eficiência (%) × Threads
 
 | Causa | Impacto |
 |---|---|
-| **Gargalo de I/O** | Leitura do CSV (~2,2 GB) é serial, limitando o ganho máximo |
+| **Gargalo de I/O** | Leitura do CSV (~8.1 GB) é serial, limitando o ganho máximo |
 | **Sincronização** | `ConcurrentHashMap` usa striped locking, introduzindo contenção |
 | **Contenção de cache** | Cache L3 disputado intensamente por 12 threads simultâneas |
 | **Overhead de particionamento** | Divisão de blocos e alocação no Fork/Join tem custo fixo não negligenciável |
