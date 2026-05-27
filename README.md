@@ -48,7 +48,7 @@ O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de D
 
 Foram utilizados dois algoritmos principais em conjunto:
 
-1. **Divisão e conquista paralela com Fork/Join (Java):** o dataset é particionado em blocos de linhas processados em paralelo. Cada worker calcula localmente mín, máx, soma e contagem.
+1. **Divisão e conquista paralela:** o dataset é particionado em blocos de linhas processados em paralelo. Cada worker calcula localmente mín, máx, soma e contagem.
 2. **Redução paralela com `ConcurrentHashMap`:** para acumular o total pago por município de forma thread-safe, sem locks explícitos.
 
 ### Qual a complexidade aproximada do algoritmo?
@@ -104,17 +104,17 @@ Todos os testes foram executados com a máquina em estado dedicado: sem outros p
 
 ---
 
-## 4. Resultados Experimentais (ajustar)
+## 4. Resultados Experimentais 
 
 > Tempo médio de execução (média de 4 execuções, com descarte do maior valor).
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 |:---:|:---:|
-| 1 |  |
-| 2 |  |
-| 4 |  |
-| 8 |  |
-| 12 |  |
+| 1 | 39,92 |
+| 2 | 28,98 |
+| 4 | 17,34 |
+| 8 | 16,58 |
+| 12 | 15,97 |
 
 ---
 
@@ -143,7 +143,7 @@ onde:
 |:---:|:---:|:---:|:---:|
 
 
-> **Melhor speedup:** 6,80× com 12 threads | **Melhor eficiência:** 94,5% com 2 threads
+> **Melhor speedup:**  | **Melhor eficiência:** 
 
 ---
 
@@ -182,23 +182,22 @@ Eficiência (%) × Threads
 
 ### O speedup obtido foi próximo do ideal?
 
-**Não.** O speedup máximo obtido foi de **6,80×** com 12 threads, enquanto o ideal linear seria 12×. Essa diferença é explicada pela **Lei de Amdahl**: há uma parcela serial no algoritmo (leitura inicial do arquivo e fase de redução) que limita o ganho máximo possível, independentemente do número de threads.
+
 
 ### A aplicação apresentou escalabilidade?
 
-**Sim, de forma moderada.** De 1 para 8 threads o ganho foi expressivo e consistente (de 262,4s para 41,3s). A partir de 8 threads, o ganho adicional foi pequeno (41,3s → 38,6s), indicando que o limite prático de escalabilidade foi atingido.
+
 
 ### Em qual ponto a eficiência começou a cair significativamente?
 
-A eficiência decaiu mais acentuadamente entre **8 e 12 threads** (de 79,4% para 56,7%). O ponto crítico de inflexão foi ao ultrapassar o número de núcleos físicos (6), onde os threads lógicos adicionais passaram a compartilhar recursos de execução.
 
 ### O número de threads ultrapassa o número de núcleos físicos?
 
-**Sim.** A máquina possui **6 núcleos físicos** e 12 threads lógicas via Hyper-Threading. A configuração com 12 threads utiliza todos os recursos lógicos, mas os ganhos são limitados pois o Hyper-Threading não duplica a capacidade computacional real.
+
 
 ### Houve overhead de paralelização?
 
-**Sim.** O overhead é observável principalmente em 12 threads: criação e gerenciamento do pool de threads, sincronização no `ConcurrentHashMap` e contenção de cache L3 entre núcleos contribuem para que o ganho incremental de 8 → 12 threads seja apenas **6,5%** — muito inferior ao 50% esperado no cenário ideal.
+
 
 ### Causas identificadas para perda de desempenho
 
