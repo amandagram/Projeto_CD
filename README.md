@@ -135,11 +135,11 @@ Todos os testes foram executados com a máquina em estado dedicado: sem outros p
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 |:---:|:---:|
-| 1 | 39,92 |
-| 2 | 28,98 |
-| 4 | 17,34 |
-| 8 | 16,58 |
-| 12 | 15,97 |
+| 1 | 188,02 |
+| 2 |  |
+| 4 ||
+| 8 |  |
+| 12 |  |
 
 ---
 
