@@ -28,6 +28,31 @@
 
 ## 1. Descrição do Problema
 
+### Relevância e Benefício para a Sociedade
+
+O Bolsa Família é o maior programa de transferência de renda do Brasil, criado em 2003 e reformulado em 2023. Ele atende famílias em situação de pobreza e extrema pobreza por meio do pagamento mensal de benefícios financeiros, condicionados ao cumprimento de condicionalidades nas áreas de saúde e educação.
+
+Com a nova reformulação, o programa passou a ter uma estrutura de benefícios mais ampla, incluindo o Benefício de Renda Familiar per capita, o Benefício Primeira Infância (para crianças de 0 a 6 anos), o Benefício Variável Familiar Nutriz (para gestantes e lactantes) e o Benefício Variável Familiar (para crianças e adolescentes de 7 a 18 anos). Essa estrutura torna o programa mais sensível à composição familiar e às condições socioeconômicas de cada domicílio.
+
+Analisar esse volume massivo de dados de forma eficiente é um desafio computacional que demanda o uso de técnicas avançadas de programação concorrente e distribuída.
+
+A análise computacional dos dados do Bolsa Família não é apenas um exercício acadêmico: ela representa uma ferramenta real de transparência pública, controle social e formulação de políticas. Compreender como os recursos são distribuídos geograficamente, demograficamente e financeiramente  é fundamental para garantir que o programa atinja seus objetivos com eficiência e equidade.
+
+### Por que este projeto importa para a sociedade?
+
+Transparência e controle social;
+Apoio à tomada de decisão pública;
+Combate a fraudes e irregularidades;
+Redução da desigualdade regional;
+Eficiência tecnológica a serviço público.
+
+Em suma, este projeto demonstra que a tecnologia, especialmente a programação paralela e distribuída, é uma aliada indispensável na construção de um Estado mais transparente, eficiente e justo. Cada análise realizada sobre os dados do Bolsa Família é, em última instância, uma contribuição para que os recursos públicos cheguem a quem mais precisa.
+
+A análise dos pagamentos do Bolsa Família em janeiro de 2026 revelou padrões importantes: a concentração de recursos em grandes metrópoles, a heterogeneidade dos valores individuais, a desigualdade regional na distribuição e a existência de municípios com potencial sub-cobertura do programa.
+
+O uso de threads, estruturas concorrentes e processamento paralelo não apenas acelerou a análise, mas tornou viável o processamento de um volume de dados que, de forma sequencial, seria impraticável em tempo hábil. 
+
+---
 ### Qual é o objetivo do programa?
 
 O programa tem como objetivo processar o dataset oficial de pagamentos do **Bolsa Família** referente ao mês de **janeiro de 2026**, extraindo as seguintes métricas:
@@ -229,29 +254,6 @@ O **melhor custo-benefício** foi obtido com
 - [ ] Implementar particionamento dinâmico de carga (work-stealing) para melhor balanceamento
 - [ ] Explorar SIMD e vetorização para acelerar operações de comparação de valores
 
-### Relevância e Benefício para a Sociedade
-
-O Bolsa Família é o maior programa de transferência de renda do Brasil, criado em 2003 e reformulado em 2023. Ele atende famílias em situação de pobreza e extrema pobreza por meio do pagamento mensal de benefícios financeiros, condicionados ao cumprimento de condicionalidades nas áreas de saúde e educação.
-
-Com a nova reformulação, o programa passou a ter uma estrutura de benefícios mais ampla, incluindo o Benefício de Renda Familiar per capita, o Benefício Primeira Infância (para crianças de 0 a 6 anos), o Benefício Variável Familiar Nutriz (para gestantes e lactantes) e o Benefício Variável Familiar (para crianças e adolescentes de 7 a 18 anos). Essa estrutura torna o programa mais sensível à composição familiar e às condições socioeconômicas de cada domicílio.
-
-Analisar esse volume massivo de dados de forma eficiente é um desafio computacional que demanda o uso de técnicas avançadas de programação concorrente e distribuída.
-
-A análise computacional dos dados do Bolsa Família não é apenas um exercício acadêmico: ela representa uma ferramenta real de transparência pública, controle social e formulação de políticas. Compreender como os recursos são distribuídos geograficamente, demograficamente e financeiramente  é fundamental para garantir que o programa atinja seus objetivos com eficiência e equidade.
-
-### Por que este projeto importa para a sociedade?
-
-Transparência e controle social;
-Apoio à tomada de decisão pública;
-Combate a fraudes e irregularidades;
-Redução da desigualdade regional;
-Eficiência tecnológica a serviço público.
-
-Em suma, este projeto demonstra que a tecnologia, especialmente a programação paralela e distribuída, é uma aliada indispensável na construção de um Estado mais transparente, eficiente e justo. Cada análise realizada sobre os dados do Bolsa Família é, em última instância, uma contribuição para que os recursos públicos cheguem a quem mais precisa.
-
-A análise dos pagamentos do Bolsa Família em janeiro de 2026 revelou padrões importantes: a concentração de recursos em grandes metrópoles, a heterogeneidade dos valores individuais, a desigualdade regional na distribuição e a existência de municípios com potencial sub-cobertura do programa.
-
-O uso de threads, estruturas concorrentes e processamento paralelo não apenas acelerou a análise, mas tornou viável o processamento de um volume de dados que, de forma sequencial, seria impraticável em tempo hábil. 
 
 ---
 
