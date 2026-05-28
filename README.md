@@ -63,11 +63,11 @@ O programa tem como objetivo processar o dataset oficial de pagamentos do **Bols
 - **Ranking dos cinco municípios com maiores volumes totais** de pagamento (UF + valor)
 - **Ranking dos cinco municípios com menores volumes totais** de pagamento (UF + valor)
 
-A paralelização visa reduzir drasticamente o tempo de processamento diante do volume massivo de dados (~4.000.000 de registros).
+A paralelização visa reduzir drasticamente o tempo de processamento diante do volume massivo de dados (~74,9 M de registros).
 
 ### Qual o volume de dados processado?
 
-O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de Dados Abertos do Governo Federal](https://dados.gov.br). Para os 04 meses, o arquivo contém aproximadamente **4.000.000 de registros (8,1Gb)**, com os campos: `Més de competência`, `Més de referência`, `UF`, `Nome do Município`, `NIS Favorecido`,`Código do Município SIAFI`, `CPF` (anonimizado), `Nome` e `Valor do Benefício`.
+O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de Dados Abertos do Governo Federal](https://dados.gov.br). Para os 04 meses, o arquivo contém aproximadamente **~74,9 M de registros (8,1Gb)**, com os campos: `Més de competência`, `Més de referência`, `UF`, `Nome do Município`, `NIS Favorecido`,`Código do Município SIAFI`, `CPF` (anonimizado), `Nome` e `Valor do Benefício`.
 
 ### Qual algoritmo foi utilizado? (ajustar)
 
