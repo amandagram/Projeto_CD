@@ -107,7 +107,7 @@ Foram utilizados dois algoritmos principais em conjunto:
 
 ### Como o tempo de execução foi medido
 
-O tempo foi medido com `***********`, capturado imediatamente antes do início do processamento e logo após a finalização da fase de redução. O resultado é convertido para segundos com precisão de dois decimais. O tempo de leitura inicial do arquivo **está incluído** na medição, pois representa parte integral do processamento real.
+O tempo foi medido capturado imediatamente antes do início do processamento e logo após a finalização da fase de redução. O resultado é convertido para segundos com precisão de dois decimais. O tempo de leitura inicial do arquivo **está incluído** na medição, pois representa parte integral do processamento real.
 
 ### Número de execuções e cálculo da média
 
@@ -135,11 +135,11 @@ Todos os testes foram executados com a máquina em estado dedicado: sem outros p
 
 | Nº Threads/Processos | Tempo de Execução (s) |
 |:---:|:---:|
-| 1 | 188,02 |
-| 2 |  |
-| 4 ||
-| 8 |  |
-| 12 |  |
+| 1 | 245,69 |
+| 2 | 121,43 |
+| 4 | 88,45  |
+| 8 | 82,41  |
+| 12 | 71,42 |
 
 ---
 
@@ -172,7 +172,6 @@ onde:
 |:---:|:---:|:---:|:---:|
 
 > **Melhor speedup:**  | **Melhor eficiência:** 
-
 ---
 
 ## 7. Gráfico de Tempo de Execução (ajustar)
