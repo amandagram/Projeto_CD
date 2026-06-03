@@ -1,0 +1,187 @@
+# Processamento Paralelo — Bolsa Família (Out/2025 a Jan/2026)
+
+Projeto de processamento paralelo em Python para análise de pagamentos do Bolsa Família, desenvolvido como estudo comparativo entre execução serial e paralela com diferentes números de workers.
+
+---
+
+## Objetivo
+
+Processar o dataset oficial de pagamentos do Bolsa Família referente ao período de **outubro de 2025 a janeiro de 2026**, extraindo as seguintes métricas por mês:
+
+- Maior valor de pagamento individual — com UF e nome do município
+- Menor valor de pagamento individual — com UF e nome do município
+- Média aritmética dos valores pagos
+- Ranking dos 5 municípios com maiores volumes totais de pagamento
+- Ranking dos 5 municípios com menores volumes totais de pagamento
+
+A paralelização visa reduzir o tempo de processamento diante do volume massivo de dados (~74,9 milhões de registros / ~8,26 GB).
+
+---
+
+## Dados
+
+| Arquivo original | Mês | Registros |
+|---|---|---|
+| `202601_NovoBolsaFamilia.csv` | Janeiro/2026 | 19.374.167 |
+| `202512_NovoBolsaFamilia.csv` | Dezembro/2025 | 18.662.331 |
+| `202511_NovoBolsaFamilia.csv` | Novembro/2025 | 18.309.734 |
+| `202510_NovoBolsaFamilia.csv` | Outubro/2025 | 18.599.089 |
+
+Os arquivos são disponibilizados pelo Portal da Transparência do Governo Federal em formato `.csv` compactado (separador `;`, encoding `latin-1`).
+
+---
+
+## Estrutura do projeto
+
+```
+bolsa_familia/
+├── comum.py                          # Funções compartilhadas (parser, redução, formatação)
+├── paralelo_base.py                  # Lógica paralela base
+├── unir_planilhas.py                 # Concatena os 4 CSVs em um único arquivo
+├── v1_serial.py                      # Processamento serial
+├── v2_paralelo_2.py                  # Paralelo com 2 workers
+├── v4_paralelo_4.py                  # Paralelo com 4 workers
+├── v8_paralelo_8.py                  # Paralelo com 8 workers
+├── v12_paralelo_12.py                # Paralelo com 12 workers
+├── benchmark.py                      # Roda todos os modos e exibe gráfico comparativo
+└── BolsaFamilia_Out2025_Jan2026.csv  # CSV unificado (gerado por unir_planilhas.py)
+```
+
+---
+
+## Requisitos
+
+- Python 3.10 ou superior
+- Nenhuma biblioteca externa — usa apenas módulos da biblioteca padrão:
+  - `multiprocessing`
+  - `csv`
+  - `io`
+  - `os`
+  - `time`
+
+---
+
+## Como executar
+
+### 1. Obter os dados
+
+Baixe os arquivos `.zip` do [Portal da Transparência](https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia) e extraia os CSVs na pasta do projeto.
+
+### 2. Unir os arquivos em um único CSV
+
+```bash
+python unir_planilhas.py
+```
+
+Isso gera o arquivo `BolsaFamilia_Out2025_Jan2026.csv` (~8,26 GB) com todos os 4 meses concatenados. Precisa ser feito apenas uma vez.
+
+### 3. Rodar o benchmark completo
+
+```bash
+python benchmark.py
+```
+
+Executa automaticamente serial → 2 workers → 4 workers → 8 workers → 12 workers e exibe ao final uma tabela e gráficos ASCII comparativos.
+
+### 4. Rodar individualmente
+
+```bash
+python v1_serial.py
+python v2_paralelo_2.py
+python v4_paralelo_4.py
+python v8_paralelo_8.py
+python v12_paralelo_12.py
+```
+
+> ⚠️ **Windows:** sempre execute pelo terminal (`cmd` ou terminal do VS Code). Nunca use o botão ▶ do VS Code para os scripts paralelos (v2 a v12) — o `multiprocessing` no Windows exige que o script seja chamado como módulo principal, e o botão ▶ pode causar a criação recursiva de processos.
+
+---
+
+## Estratégia de paralelização
+
+O arquivo unificado (~8,26 GB) é dividido em **N fatias de bytes** alinhadas em linhas completas. Cada worker do `multiprocessing.Pool` recebe uma fatia e a processa de forma independente.
+
+Cada worker:
+1. Lê sua fatia em **blocos de 64 MB** com `split()` direto em bytes — sem `csv.reader`, eliminando overhead de decodificação desnecessária
+2. Agrupa os resultados parciais por código do mês (coluna `MÊS COMPETÊNCIA`)
+3. Retorna seu dicionário de resultados para o processo principal
+
+O processo principal reduz todos os dicionários parciais em um único resultado por mês.
+
+```
+Arquivo CSV unificado (8,26 GB)
+         │
+         ▼
+┌────────────────────┐
+│  calcular_fatias() │  divide em N fatias alinhadas
+└────────────────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+ worker 1  worker N    ← cada um lê e processa sua fatia
+    │         │
+    └────┬────┘
+         ▼
+    reduzir()          ← agrega por mês
+         │
+         ▼
+    resultados por mês
+```
+
+---
+
+## Resultados — Hardware de teste
+
+**Máquina:** DESKTOP-UVLP3QP  
+**Processador:** Intel Core i5-1135G7 @ 2.40 GHz (4 núcleos / 8 threads)  
+**RAM:** 16 GB  
+**Armazenamento:** SSD (~154 GB livres)  
+**Sistema:** Windows 11 64-bit
+
+### Versão otimizada (blocos de 64 MB + split em bytes)
+
+| Configuração | Tempo | Speedup | Eficiência |
+|---|---|---|---|
+| Serial | 245.69s | 1.00x | 100.0% |
+| Paralelo 2 workers | 121.43s | 2.02x | 101.0% |
+| Paralelo 4 workers | 88.45s | 2.78x | 69.5% |
+| Paralelo 8 workers | 82.41s | 2.98x | 37.3% |
+| **Paralelo 12 workers** | **71.42s** | **3.44x** | **28.7%** |
+
+### Versão anterior (csv.reader)
+
+| Configuração | Tempo | Speedup |
+|---|---|---|
+| Serial | 174.76s | 1.00x |
+| Paralelo 2 workers | 132.89s | 1.32x |
+| Paralelo 4 workers | 79.18s | 2.21x |
+| Paralelo 8 workers | 74.35s | 2.35x |
+| Paralelo 12 workers | 76.51s | 2.28x |
+
+### Análise dos resultados
+
+- A versão otimizada com **blocos de 64 MB e `split()` em bytes** é mais eficiente nos modos paralelos, atingindo **3.44x de speedup com 12 workers**
+- O serial ficou mais lento na versão otimizada porque o `split()` em blocos tem overhead maior em single-thread comparado ao `csv.reader` com buffer
+- A eficiência de **101% com 2 workers** indica aproveitamento eficaz do cache L2/L3 do processador
+- O ponto ótimo na versão otimizada é **12 workers**, aproveitando todas as threads do i5-1135G7
+- O gargalo principal é a velocidade de leitura do SSD — por isso a eficiência cai conforme aumentam os workers (todos lendo o mesmo arquivo)
+
+---
+
+## Otimizações implementadas
+
+| Técnica | Impacto |
+|---|---|
+| Leitura em blocos de 64 MB | Reduz syscalls de I/O |
+| `split()` em bytes no lugar de `csv.reader` | Elimina overhead de parsing e decodificação por linha |
+| Parse de valor inline (`float(raw.replace...)`) | Evita chamada de função extra por registro |
+| `chunksize=1` no `pool.map` | Cada worker recebe sua fatia inteira sem redistribuição dinâmica |
+| Agrupamento por mês dentro do worker | Elimina passagem de dados brutos entre processos |
+| CSV unificado em vez de 4 arquivos separados | Fatias perfeitamente uniformes, sem desbalanceamento entre workers |
+
+---
+
+## Fonte dos dados
+
+Portal da Transparência — Governo Federal  
+[https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia](https://portaldatransparencia.gov.br/download-de-dados/novo-bolsa-familia)
