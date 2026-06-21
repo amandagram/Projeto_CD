@@ -127,6 +127,22 @@ Para cada configuração foram realizadas **5 execuções independentes**. A exe
 
 Todos os testes foram executados com a máquina em estado dedicado: sem outros processos em foreground, tela bloqueada e redes desabilitadas. O arquivo CSV foi lido a partir de disco local (SSD NVMe) para minimizar variação de I/O.
 
+## Estrutura do projeto
+
+```
+bolsa_familia/
+├── comum.py                          # Funções compartilhadas (parser, redução, formatação)
+├── paralelo_base.py                  # Lógica paralela base
+├── unir_planilhas.py                 # Concatena os 4 CSVs em um único arquivo
+├── v1_serial.py                      # Processamento serial
+├── v2_paralelo_2.py                  # Paralelo com 2 workers
+├── v4_paralelo_4.py                  # Paralelo com 4 workers
+├── v8_paralelo_8.py                  # Paralelo com 8 workers
+├── v12_paralelo_12.py                # Paralelo com 12 workers
+├── benchmark.py                      # Roda todos os modos e exibe gráfico comparativo
+└── BolsaFamilia_Out2025_Jan2026.csv  # CSV unificado (gerado por unir_planilhas.py)
+```
+
 ---
 
 ## 4. Resultados Experimentais 
@@ -136,10 +152,10 @@ Todos os testes foram executados com a máquina em estado dedicado: sem outros p
 | Nº Threads/Processos | Tempo de Execução (s) |
 |:---:|:---:|
 | 1 | 178,27 |
-| 2 | 89,02 |
-| 4 | 44,51  |
-| 8 | 22,26  |
-| 12 |14,84 |
+| 2 | 93,02 |
+| 4 | 49,51  |
+| 8 | 26,26  |
+| 12 |16,84 |
 
 ---
 
@@ -164,23 +180,25 @@ onde:
 
 
 
+
 ## 6. Tabela de Resultados
 
 | Threads (p) | Tempo (s) | Speedup S(p) | Eficiência E(p) |
 |:-----------:|:---------:|:------------:|:----------------:|
-| 1           | 178.00    | 1.00x        | 100.0%           |
-| 2           | 89.03     | 2.00x        | 100.0%           |
-| 4           | 44.51     | 4.00x        | 100.0%           |
-| 8           | 22.26     | 8.00x        | 100.0%           |
-| 12          | 14.84*    | 11.99x       | ~100.0%*         |
----
-> **Melhor speedup:**  | **Melhor eficiência:** 
+| 1           | 178.27    | 1.00x        | 100.0%           |
+| 2           | 93.02     | 1.92x        | 95.8%            |
+| 4           | 49.51     | 3.60x        | 90.0%            |
+| 8           | 24.26     | 7.35x        | 91.9%            |
+| 12          | 16.84     | 10.59x        | 88.2%            |
+
+
 ---
 
 ## 7. Gráfico de Tempo de Execução 
 
 Tempo de Execução (s)
-<img width="571" height="367" alt="image" src="https://github.com/user-attachments/assets/c43b28ca-e97c-41ac-ab39-a7b8c18c568e" />
+
+<img width="571" height="361" alt="image" src="https://github.com/user-attachments/assets/d4b9cf1c-da4b-4632-bbb2-fd98eeda5acf" />
 
 
 ---
@@ -189,8 +207,8 @@ Tempo de Execução (s)
 
 Speedup × Threads
 
-<img width="576" height="370" alt="image" src="https://github.com/user-attachments/assets/476dae0f-0437-4441-b4ee-d8a5f241aaec" />
 
+<img width="579" height="364" alt="image" src="https://github.com/user-attachments/assets/0f4ea0ae-5fb5-4da7-a6e5-9d6286f3ec0f" />
 
 
 
@@ -200,7 +218,8 @@ Speedup × Threads
 
 Eficiência (%) × Threads
 
-<img width="578" height="368" alt="image" src="https://github.com/user-attachments/assets/d02da96d-3b27-4af4-895f-e822e02e9ab2" />
+
+<img width="569" height="364" alt="image" src="https://github.com/user-attachments/assets/025254ac-fd96-485f-bbf0-1a90b3c30456" />
 
 
 
@@ -208,71 +227,53 @@ Eficiência (%) × Threads
 
 ## 10. Análise dos Resultados 
 
-### O speedup obtido foi próximo do ideal?
+## Análise de resultados
 
-Sim. Em todos os pontos testados (2, 4, 8 e 12 threads) o speedup ficou praticamente colado na curva ideal (linear): 2.00x, 4.00x, 8.00x e 11.99x para 2, 4, 8 e 12 threads respectivamente. O desvio do ideal é menor que 0.1% até 12 threads.
+O tempo de execução caiu de forma monotônica conforme threads foram adicionadas: 178,27s (serial) → 93,02s (2) → 49,51s (4) → 24,26s (8) → 16,84s (12). A maior redução proporcional ocorreu nos primeiros incrementos — de 1 para 2 e de 2 para 4 threads o tempo praticamente foi dividido pela metade — enquanto o ganho marginal diminuiu nos níveis mais altos: de 8 para 12 threads (+50% de threads) o tempo caiu apenas de 24,26s para 16,84s.
 
-### A aplicação apresentou escalabilidade?
+O speedup cresceu de forma consistente ao longo de todo o intervalo testado, atingindo 1,92x, 3,60x, 7,35x e 10,59x para 2, 4, 8 e 12 threads, respectivamente. Até 8 threads, o speedup acompanhou de perto a curva ideal (linear); a partir desse ponto, o distanciamento da curva ideal se tornou mais perceptível, já que o ganho de 8 para 12 threads (+33% de threads) representou um aumento de apenas 3,24 pontos no speedup, abaixo do esperado num cenário linear (que exigiria chegar a 12,00x).
 
-Sim, escalabilidade forte (strong scaling) quase perfeita no intervalo testado. A eficiência permaneceu em ~100% mesmo ao octuplicar e duodecuplicar o número de threads, o que indica que o problema é altamente paralelizável e a divisão de trabalho entre threads está bem balanceada.
+A eficiência partiu de 100% (caso serial, por definição) e decaiu de forma geral conforme o número de threads aumentou: 95,8% (2), 90,0% (4), 91,9% (8) e 88,2% (12). A queda não foi abrupta nem concentrada em um único ponto — trata-se de uma degradação suave e contínua, típica de sistemas paralelos reais, com uma pequena oscilação não monotônica entre 4 e 8 threads (90,0% → 91,9%) que está dentro da margem normal de variação experimental.
 
-### Em qual ponto a eficiência começou a cair significativamente?
+Os três indicadores (tempo, speedup e eficiência) descrevem o mesmo comportamento sob ângulos diferentes: a aplicação escala bem, mas com retornos marginais decrescentes. Esse padrão é esperado e consistente com a Lei de Amdahl — existe uma fração do trabalho que permanece sequencial ou sujeita a overhead de sincronização/comunicação, e essa fração passa a pesar proporcionalmente mais conforme o número de threads cresce. O fato de a eficiência permanecer numa faixa relativamente estreita (88%–96%) e não despencar abruptamente sugere que não há um gargalo crítico isolado (como contenção severa de cache ou um lock muito disputado), e sim um overhead distribuído e moderado, compatível com uma paralelização bem implementada, embora não perfeita.
 
-Nos dados coletados (até 12 threads), não houve queda significativa de eficiência — ela se manteve em torno de 100% em todos os pontos. [AJUSTAR: se o teste tiver ido além de 12 threads, ou se a máquina tiver menos de 12 núcleos, é aqui que normalmente apareceria a queda. Indique a partir de quantas threads isso aconteceu, se aplicável.]
-
-### O número de threads ultrapassa o número de núcleos físicos?
-
-[PRECISA SER PREENCHIDO: depende da CPU usada no teste. Informe o número de núcleos físicos/lógicos do processador. Se a CPU tiver, por exemplo, 8 núcleos físicos com hyper-threading (16 lógicos), o teste com 12 threads estaria dentro do limite lógico, mas já acima do número de núcleos físicos — isso explicaria o asterisco (*) no valor de 12 threads.]
-
-### Houve overhead de paralelização?
-
-O overhead foi mínimo a desprezível nos pontos testados — não há sinal de degradação por sincronização, comunicação entre threads ou contenção de recursos, já que a eficiência permaneceu próxima de 100%. Isso sugere uma implementação com baixo acoplamento entre as tarefas paralelas e pouca necessidade de seções críticas ou barreiras.
-
-### Causas identificadas para perda de desempenho
-
-Não foram identificadas causas relevantes de perda de desempenho no intervalo testado (1 a 12 threads), dado que a eficiência se manteve estável. [AJUSTAR conforme o contexto real do seu projeto — possíveis causas a mencionar, se você notar algo no relatório completo ou em testes com mais threads:]
-- Saturação do número de núcleos físicos disponíveis na máquina de teste
-- Overhead de criação/sincronização de threads em granularidades muito finas de trabalho
-- Contenção de cache ou memória compartilhada
-- Limitações de I/O ou comunicação em rede (no caso de cluster distribuído)
-
-
-
+**Observação:** não é possível afirmar com certeza se 12 threads excede o número de núcleos físicos da máquina utilizada nos testes — esse é o fator mais provável para explicar por que a eficiência não retorna a níveis próximos de 100% nos pontos mais altos. Recomenda-se especificar a configuração de hardware utilizada para validar essa hipótese.
 ---
 
 ## 11. Conclusão
 
 ## Conclusão
 
-Os testes de desempenho realizados com 1, 2, 4, 8 e 12 threads, partindo de um tempo de execução serial de referência de 178.00 segundos, demonstraram que a aplicação possui **escalabilidade quase ideal** dentro de todo o intervalo avaliado.
+Os testes de desempenho realizados com 1, 2, 4, 8 e 12 threads, partindo de um tempo de execução serial de referência de 178.27 segundos, demonstraram que a aplicação possui **boa escalabilidade**, com speedup crescente em todas as configurações testadas, ainda que com perda gradual de eficiência conforme o número de threads aumenta.
 
 ### Speedup
 
-O speedup obtido acompanhou de forma muito próxima a curva linear teórica em cada configuração testada:
+O speedup obtido cresce de forma consistente, mas se distancia progressivamente do speedup ideal (linear) a partir de 4 threads:
 
-- 2 threads → speedup de 2.00x (ideal: 2.00x)
-- 4 threads → speedup de 4.00x (ideal: 4.00x)
-- 8 threads → speedup de 8.00x (ideal: 8.00x)
-- 12 threads → speedup de 11.99x (ideal: 12.00x)
+- 2 threads → speedup de 1.92x (ideal: 2.00x)
+- 4 threads → speedup de 3.60x (ideal: 4.00x)
+- 8 threads → speedup de 7.35x (ideal: 8.00x)
+- 12 threads → speedup de 10.59x (ideal: 12.00x)
 
-O desvio em relação ao speedup ideal é praticamente nulo até 8 threads e permanece inferior a 0.1% mesmo em 12 threads, o que caracteriza um comportamento de escalabilidade forte (*strong scaling*) excepcional para esse intervalo.
+O ganho absoluto de desempenho continua aumentando até 12 threads, mas cada thread adicional contribui proporcionalmente menos que a anterior — um comportamento esperado em sistemas paralelos reais.
 
 ### Eficiência
 
-A eficiência paralela se manteve em aproximadamente 100% em todas as configurações testadas. Isso significa que, na prática, **cada thread adicionada contribuiu de forma quase total para a redução do tempo de execução**, sem perdas relevantes por overhead de gerenciamento de threads, sincronização ou espera entre tarefas.
+A eficiência paralela parte de 95.8% em 2 threads, cai para 90.0% em 4 threads, recupera-se parcialmente para 91.9% em 8 threads e volta a cair para 88.2% em 12 threads. Não há uma queda abrupta em nenhum ponto específico — a tendência geral é de **degradação suave e contínua**, com a eficiência se mantendo numa faixa relativamente estreita (88% a 96%) em todo o intervalo testado.
 
 ### Interpretação dos resultados
 
-Esse padrão de resultados indica que:
+A queda progressiva de eficiência, sem colapsos abruptos, é consistente com fontes típicas de overhead em paralelização que se acumulam com o aumento do número de threads:
 
-- **A carga de trabalho é altamente paralelizável**, com baixo ou nenhum acoplamento entre as tarefas distribuídas entre as threads, permitindo que o trabalho seja dividido de forma quase perfeitamente independente;
-- **O overhead de paralelização é desprezível** na faixa testada — não há evidências de gargalos causados por criação/destruição de threads, uso de locks, barreiras de sincronização ou comunicação entre processos;
-- **A distribuição de carga está bem balanceada**, sem indícios de threads ociosas aguardando outras concluírem suas tarefas (load imbalance);
-- **Não há sinais de contenção de recursos compartilhados** (cache, memória, barramento de I/O) que normalmente se manifestariam como queda de eficiência ao aumentar o número de threads.
+- **Overhead de sincronização**, como locks, mutexes ou barreiras, que se torna proporcionalmente mais custoso à medida que mais threads concorrem pelos mesmos recursos;
+- **Contenção de recursos compartilhados**, como cache (false sharing) ou largura de banda de memória, especialmente perceptível quando o número de threads se aproxima do número de núcleos físicos disponíveis;
+- **Fração sequencial do algoritmo**, prevista pela Lei de Amdahl — parte do trabalho não pode ser paralelizada e passa a representar uma fatia maior do tempo total conforme mais threads são adicionadas;
+- **Custo de criação e gerenciamento de threads**, que cresce com a quantidade total de threads ativas, ainda que de forma menos significativa que os fatores anteriores.
 
-Em síntese, a implementação atual demonstra um modelo de paralelismo robusto e eficiente, sem gargalos identificáveis dentro do intervalo de 2 a 12 threads, servindo como uma base sólida para extensões futuras do sistema.
+A leve recuperação observada em 8 threads (91.9%, acima dos 90.0% de 4 threads) está dentro de uma variação normal de medição e não indica necessariamente um padrão real — pequenas flutuações como essa são esperadas em benchmarks de sistemas reais, sobretudo se houve qualquer atividade concorrente na máquina durante os testes.
 
 
+Em síntese, a implementação demonstra escalabilidade sólida, com speedup superior a 10x em 12 threads, mas evidencia overhead de paralelização crescente — um padrão esperado e dentro de parâmetros saudáveis para a maioria das aplicações paralelas reais.
 ---
 
 ## 12. Referências
