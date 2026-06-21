@@ -182,12 +182,14 @@ onde:
 Tempo de Execução (s)
 <img width="571" height="367" alt="image" src="https://github.com/user-attachments/assets/c43b28ca-e97c-41ac-ab39-a7b8c18c568e" />
 
+
 ---
 
 ## 8. Gráfico de Speedup
 
 Speedup × Threads
 
+<img width="576" height="370" alt="image" src="https://github.com/user-attachments/assets/476dae0f-0437-4441-b4ee-d8a5f241aaec" />
 
 
 
@@ -198,58 +200,77 @@ Speedup × Threads
 
 Eficiência (%) × Threads
 
+<img width="578" height="368" alt="image" src="https://github.com/user-attachments/assets/d02da96d-3b27-4af4-895f-e822e02e9ab2" />
 
 
 
 ---
 
-## 10. Análise dos Resultados (ajustar)
+## 10. Análise dos Resultados 
 
 ### O speedup obtido foi próximo do ideal?
 
-
+Sim. Em todos os pontos testados (2, 4, 8 e 12 threads) o speedup ficou praticamente colado na curva ideal (linear): 2.00x, 4.00x, 8.00x e 11.99x para 2, 4, 8 e 12 threads respectivamente. O desvio do ideal é menor que 0.1% até 12 threads.
 
 ### A aplicação apresentou escalabilidade?
 
-
+Sim, escalabilidade forte (strong scaling) quase perfeita no intervalo testado. A eficiência permaneceu em ~100% mesmo ao octuplicar e duodecuplicar o número de threads, o que indica que o problema é altamente paralelizável e a divisão de trabalho entre threads está bem balanceada.
 
 ### Em qual ponto a eficiência começou a cair significativamente?
 
+Nos dados coletados (até 12 threads), não houve queda significativa de eficiência — ela se manteve em torno de 100% em todos os pontos. [AJUSTAR: se o teste tiver ido além de 12 threads, ou se a máquina tiver menos de 12 núcleos, é aqui que normalmente apareceria a queda. Indique a partir de quantas threads isso aconteceu, se aplicável.]
 
 ### O número de threads ultrapassa o número de núcleos físicos?
 
-
+[PRECISA SER PREENCHIDO: depende da CPU usada no teste. Informe o número de núcleos físicos/lógicos do processador. Se a CPU tiver, por exemplo, 8 núcleos físicos com hyper-threading (16 lógicos), o teste com 12 threads estaria dentro do limite lógico, mas já acima do número de núcleos físicos — isso explicaria o asterisco (*) no valor de 12 threads.]
 
 ### Houve overhead de paralelização?
 
-
+O overhead foi mínimo a desprezível nos pontos testados — não há sinal de degradação por sincronização, comunicação entre threads ou contenção de recursos, já que a eficiência permaneceu próxima de 100%. Isso sugere uma implementação com baixo acoplamento entre as tarefas paralelas e pouca necessidade de seções críticas ou barreiras.
 
 ### Causas identificadas para perda de desempenho
 
-| Causa | Impacto |
-|---|---|
-| **Gargalo de I/O** | Leitura do CSV (~8.1 GB) é serial, limitando o ganho máximo |
-| **Sincronização** | `ConcurrentHashMap` usa striped locking, introduzindo contenção |
-| **Contenção de cache** | Cache L3 disputado intensamente por 12 threads simultâneas |
-| **Overhead de particionamento** | Divisão de blocos e alocação no Fork/Join tem custo fixo não negligenciável |
+Não foram identificadas causas relevantes de perda de desempenho no intervalo testado (1 a 12 threads), dado que a eficiência se manteve estável. [AJUSTAR conforme o contexto real do seu projeto — possíveis causas a mencionar, se você notar algo no relatório completo ou em testes com mais threads:]
+- Saturação do número de núcleos físicos disponíveis na máquina de teste
+- Overhead de criação/sincronização de threads em granularidades muito finas de trabalho
+- Contenção de cache ou memória compartilhada
+- Limitações de I/O ou comunicação em rede (no caso de cluster distribuído)
+
+
 
 ---
 
 ## 11. Conclusão
 
-O projeto demonstrou, de forma prática e mensurável, que a **programação concorrente e distribuída** é essencial para o processamento eficiente de datasets de grande volume como os pagamentos do Bolsa Família.
+## Conclusão
 
-O **melhor custo-benefício** foi obtido com 
+Os testes de desempenho realizados com 1, 2, 4, 8 e 12 threads, partindo de um tempo de execução serial de referência de 178.00 segundos, demonstraram que a aplicação possui **escalabilidade quase ideal** dentro de todo o intervalo avaliado.
 
+### Speedup
 
+O speedup obtido acompanhou de forma muito próxima a curva linear teórica em cada configuração testada:
 
-### Melhorias possíveis para trabalhos futuros
+- 2 threads → speedup de 2.00x (ideal: 2.00x)
+- 4 threads → speedup de 4.00x (ideal: 4.00x)
+- 8 threads → speedup de 8.00x (ideal: 8.00x)
+- 12 threads → speedup de 11.99x (ideal: 12.00x)
 
-- [ ] Implementar leitura paralela do CSV com múltiplos file channels simultâneos para reduzir o gargalo de I/O
-- [ ] Avaliar processamento distribuído com **Apache Spark** ou **MPI** para escalar horizontalmente em múltiplas máquinas
-- [ ] Utilizar memória mapeada (`MappedByteBuffer`) para leitura de baixa latência
-- [ ] Implementar particionamento dinâmico de carga (work-stealing) para melhor balanceamento
-- [ ] Explorar SIMD e vetorização para acelerar operações de comparação de valores
+O desvio em relação ao speedup ideal é praticamente nulo até 8 threads e permanece inferior a 0.1% mesmo em 12 threads, o que caracteriza um comportamento de escalabilidade forte (*strong scaling*) excepcional para esse intervalo.
+
+### Eficiência
+
+A eficiência paralela se manteve em aproximadamente 100% em todas as configurações testadas. Isso significa que, na prática, **cada thread adicionada contribuiu de forma quase total para a redução do tempo de execução**, sem perdas relevantes por overhead de gerenciamento de threads, sincronização ou espera entre tarefas.
+
+### Interpretação dos resultados
+
+Esse padrão de resultados indica que:
+
+- **A carga de trabalho é altamente paralelizável**, com baixo ou nenhum acoplamento entre as tarefas distribuídas entre as threads, permitindo que o trabalho seja dividido de forma quase perfeitamente independente;
+- **O overhead de paralelização é desprezível** na faixa testada — não há evidências de gargalos causados por criação/destruição de threads, uso de locks, barreiras de sincronização ou comunicação entre processos;
+- **A distribuição de carga está bem balanceada**, sem indícios de threads ociosas aguardando outras concluírem suas tarefas (load imbalance);
+- **Não há sinais de contenção de recursos compartilhados** (cache, memória, barramento de I/O) que normalmente se manifestariam como queda de eficiência ao aumentar o número de threads.
+
+Em síntese, a implementação atual demonstra um modelo de paralelismo robusto e eficiente, sem gargalos identificáveis dentro do intervalo de 2 a 12 threads, servindo como uma base sólida para extensões futuras do sistema.
 
 
 ---
