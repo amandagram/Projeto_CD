@@ -164,13 +164,13 @@ onde:
 
 ## 6. Tabela de Resultados (ajustar)
 
-Tempo (s) | Speedup S(p) | Eficiência E(p) |
+| Threads | Tempo (s) | Speedup S(p) | Eficiência E(p) |
 |---|---|---|---|
 | 1           | 178.00    | 1.00x        | 100.0%           |
-| 2           | 89.03     | 2.00x        | 100.0%           |
+| 2           | 89.03     | 2.00x        | 99.98%           |
 | 4           | 44.51     | 4.00x        | 100.0%           |
-| 8           | 22.26     | 8.00x        | 100.0%           |
-| 12          | 14.84*    | 11.99x       | ~100.0%*         |
+| 8           | 22.26     | 7.99x        | 99.9.0%           |
+| 12          | 14.84*    | 11.99x       | ~99.9.0%*         |
 
 ---
 > **Melhor speedup:**  | **Melhor eficiência:** 
