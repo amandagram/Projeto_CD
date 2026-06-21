@@ -69,7 +69,7 @@ A paralelização visa reduzir drasticamente o tempo de processamento diante do 
 
 O dataset utilizado é o arquivo CSV disponibilizado mensalmente no [Portal de Dados Abertos do Governo Federal](https://dados.gov.br). Para os 04 meses, o arquivo contém aproximadamente **~74,9 M de registros (8,1Gb)**, com os campos: `Més de competência`, `Més de referência`, `UF`, `Nome do Município`, `NIS Favorecido`,`Código do Município SIAFI`, `CPF` (anonimizado), `Nome` e `Valor do Benefício`.
 
-### Qual algoritmo foi utilizado? (ajustar)
+### Qual algoritmo foi utilizado? 
 
 Foram utilizados dois algoritmos principais em conjunto:
 
@@ -165,11 +165,11 @@ onde:
 ## 6. Tabela de Resultados (ajustar)
 
 | Threads/Processos | Tempo (s) | Speedup | Eficiência |
-|:---:|:---:|:---:|:---:|
-|:---:|:---:|:---:|:---:|
-|:---:|:---:|:---:|:---:|
-|:---:|:---:|:---:|:---:|
-|:---:|:---:|:---:|:---:|
+|1|178,27|1,00|100|
+|2|89,03|2,0|99,98|
+|4|44,51|4,0|100|
+|8|22,26|7,9|99,9|
+|12|14,84|12,0|99,9|
 
 > **Melhor speedup:**  | **Melhor eficiência:** 
 ---
@@ -177,6 +177,7 @@ onde:
 ## 7. Gráfico de Tempo de Execução 
 
 Tempo de Execução (s)
+<img width="571" height="367" alt="image" src="https://github.com/user-attachments/assets/c43b28ca-e97c-41ac-ab39-a7b8c18c568e" />
 
 ---
 
