@@ -237,7 +237,7 @@ A eficiência partiu de 100% (caso serial, por definição) e decaiu de forma ge
 
 Os três indicadores (tempo, speedup e eficiência) descrevem o mesmo comportamento sob ângulos diferentes: a aplicação escala bem, mas com retornos marginais decrescentes. Esse padrão é esperado e consistente com a Lei de Amdahl — existe uma fração do trabalho que permanece sequencial ou sujeita a overhead de sincronização/comunicação, e essa fração passa a pesar proporcionalmente mais conforme o número de threads cresce. O fato de a eficiência permanecer numa faixa relativamente estreita (88%–96%) e não despencar abruptamente sugere que não há um gargalo crítico isolado (como contenção severa de cache ou um lock muito disputado), e sim um overhead distribuído e moderado, compatível com uma paralelização bem implementada, embora não perfeita.
 
-**Observação:** não é possível afirmar com certeza se 12 threads excede o número de núcleos físicos da máquina utilizada nos testes — esse é o fator mais provável para explicar por que a eficiência não retorna a níveis próximos de 100% nos pontos mais altos. Recomenda-se especificar a configuração de hardware utilizada para validar essa hipótese.
+
 ---
 
 ## 11. Conclusão
