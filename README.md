@@ -93,13 +93,11 @@ Foram utilizados dois algoritmos principais em conjunto:
 
 | Item | Descrição |
 |---|---|
-| **Processador** | ************** |
-| **Número de núcleos** | ******************** |
+| **Processador** | 12th Gen Intel(R) Core(TM) i7-12700 (2.10 GHz) |
+| **Número de núcleos** | 12 |
 | **Memória RAM** | 16 GB DDR4 2933 MHz |
-| **Sistema Operacional** | ****************** |
-| **Linguagem utilizada** | ******************* |
-| **Biblioteca de paralelização** | ****************** |
-| **Compilador / Versão** | ***************** |
+| **Sistema Operacional** | Sistema operacional de 64 bits, |
+| **Compilador / Versão** | Windows 11 Pro |
 
 ---
 
